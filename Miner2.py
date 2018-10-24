@@ -49,14 +49,12 @@ class Miner:
                 msg = q0.get()
                 # validate and add block to blockchain
                 #print(msg)
+
                 temp_blockchain = self.blockchain
                 self.blockchain.add(msg)
                 if not self.blockchain.validate(msg):
                     self.blockchain = temp_blockchain
-                    print('Incoming block is not added')
-                else:
-                    print('Block successfully added')
-                print('q0.empty()',q0.empty())
+                #print('q0.empty()',q0.empty())
 
             while not q1.empty():
             # validate and add txn to the pool
@@ -73,7 +71,7 @@ class Miner:
                 blk = Block(hash_of_previous_header,root,timestamp,nonce,[tx0.to_json()])
                 header_hash = blk.generate_header_hash()
                 while header_hash >= TARGET and q1.empty():
-                    if self.transaction_pool == []:
+                    if self.transaction_pool == [] :
                         nonce = random.getrandbits(32)
                         blk = Block(hash_of_previous_header,root,timestamp,nonce,[tx0.to_json()])
                         header_hash = blk.generate_header_hash()
@@ -94,7 +92,6 @@ class Miner:
 
             block_json = blk.to_json()
             #print(block_json)
-
             # Add new block to the blockchain
             try:
                 self.blockchain.add(blk)
@@ -111,17 +108,15 @@ class Miner:
     def broadcast_block(self,block_json):
         print("==================broadcast block starts======================")
         UDP_IP = "localhost"
-        UDP_PORT = 12345
+        UDP_PORT = 4321
         sock = socket.socket(socket.AF_INET,  # Internet
                                  socket.SOCK_DGRAM)  # UDP
         MESSAGE = ['0',block_json]
         try:
             sock.sendto(json.dumps(MESSAGE).encode(), (UDP_IP, UDP_PORT))
-            #data, server = sock.recvform(4096)
             print("Data sent")
         finally:
             sock.close()
-
 
     # Create a new transaction
     def create_transaction(self, receiver, amount, comment):
@@ -192,7 +187,7 @@ def print_balance(miners):
 def server(q0,q1):
     print("==================Server starts======================")
     UDP_IP = "localhost"
-    UDP_PORT = 4321
+    UDP_PORT = 12345
     sock = socket.socket(socket.AF_INET, # Internet
                         socket.SOCK_DGRAM) # UDP
     sock.bind((UDP_IP, UDP_PORT))
@@ -214,10 +209,10 @@ def server(q0,q1):
 
 if __name__ == "__main__":
     miner = Miner.new()
-    q0 = Queue()
-    q1 = Queue()
-    p1 = Process(target=miner.mine_block, args=(q0,q1))
-    p2 = Process(target=server, args=(q0,q1))
+    q3 = Queue()
+    q4 = Queue()
+    p1 = Process(target=miner.mine_block, args=(q3,q4))
+    p2 = Process(target=server, args=(q3,q4))
     p1.start()
     p2.start()
 
