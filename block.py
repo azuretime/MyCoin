@@ -1,8 +1,8 @@
-
 import json,hashlib
+
 class Block:
     def __init__(self, hash_of_previous_header = None,root = None,
-        timestamp = None,nonce= None, transactions = []):
+                    timestamp = None,nonce= None, transactions = None):
 
         self.transactions = transactions
         self.header = {
